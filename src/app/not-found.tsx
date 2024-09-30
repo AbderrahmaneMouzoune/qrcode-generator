@@ -4,7 +4,7 @@ export default function NotFound() {
   return (
     <section className="container mx-auto space-y-8">
       <Headline variant={'h1'} className="text-center">
-        404 Page not found :(
+        <span className="text-accent">404</span> Page not found :(
       </Headline>
     </section>
   )
