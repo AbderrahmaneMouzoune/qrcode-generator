@@ -24,6 +24,7 @@ import {
   FileTextIcon,
   AppWindowIcon,
 } from 'lucide-react'
+import { Badge } from './ui/badge'
 
 export function QrCodeGenerator() {
   const [url, setUrl] = useState('')
@@ -83,9 +84,9 @@ export function QrCodeGenerator() {
             <AccordionItem value="frames">
               <AccordionTrigger>
                 Frames
-                <span className="ml-auto hover:no-underline bg-green-500 text-white text-xs px-2 py-1 rounded-full">
+                <Badge variant={'success'} className="ml-auto mr-2">
                   NEW!
-                </span>
+                </Badge>
               </AccordionTrigger>
               <AccordionContent>Frames content goes here</AccordionContent>
             </AccordionItem>
@@ -99,12 +100,12 @@ export function QrCodeGenerator() {
 
           <div className="flex space-x-4">
             <Button variant="outline" className="w-full">
-              <ImageIcon className="size-5 mr-2" />
-              Download PNG
-            </Button>
-            <Button variant="outline" className="w-full">
               <FileTextIcon className="size-5 mr-2" />
               Download SVG
+            </Button>
+            <Button variant="outline" className="w-full">
+              <ImageIcon className="size-5 mr-2" />
+              Download PNG
             </Button>
           </div>
         </div>
