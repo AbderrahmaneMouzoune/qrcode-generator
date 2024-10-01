@@ -7,7 +7,7 @@ type QrCodeDownloadProps = {
   urls: string[]
 }
 
-export default function QrCodeDownload({ urls }: QrCodeDownloadProps) {
+function QrCodeDownload({ urls }: QrCodeDownloadProps) {
   const canvasRefs = useRef<(HTMLCanvasElement | null)[]>([])
 
   // const generateUrl = (id: number): string => {
@@ -19,22 +19,22 @@ export default function QrCodeDownload({ urls }: QrCodeDownloadProps) {
   //   return url.toString()
   // }
 
-  const downloadQRCode = (index: number) => {
-    const canvas = canvasRefs.current[index]
-    if (canvas) {
-      const url = canvas.toDataURL('image/png')
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `qrcode_${index + 1}.png` // Nom du fichier
-      a.click()
-    }
-  }
+  // const downloadQRCode = (index: number) => {
+  //   const canvas = canvasRefs.current[index]
+  //   if (canvas) {
+  //     const url = canvas.toDataURL('image/png')
+  //     const a = document.createElement('a')
+  //     a.href = url
+  //     a.download = `qrcode_${index + 1}.png` // Nom du fichier
+  //     a.click()
+  //   }
+  // }
 
-  const downloadAll = () => {
-    for (let i = 0; i < urls.length; i++) {
-      downloadQRCode(i)
-    }
-  }
+  // const downloadAll = () => {
+  //   for (let i = 0; i < urls.length; i++) {
+  //     downloadQRCode(i)
+  //   }
+  // }
 
   return (
     <div className="flex space-y-2 justify-center">
@@ -43,7 +43,7 @@ export default function QrCodeDownload({ urls }: QrCodeDownloadProps) {
           <FileTextIcon className="size-5 mr-2" />
           Download {urls.length} SVG
         </Button>
-        <Button variant="outline" className="w-full" onClick={downloadAll}>
+        <Button variant="outline" className="w-full">
           <ImageIcon className="size-5 mr-2" />
           Download {urls.length} PNG
         </Button>
@@ -51,3 +51,5 @@ export default function QrCodeDownload({ urls }: QrCodeDownloadProps) {
     </div>
   )
 }
+
+export { QrCodeDownload }

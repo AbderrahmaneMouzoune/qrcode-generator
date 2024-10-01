@@ -1,15 +1,9 @@
 'use client'
-import React, { useState } from 'react'
-import { Input } from '@components/ui/input'
-import { MinusIcon, PlusIcon } from 'lucide-react'
-import { Button } from '@components/ui/button'
 import {
   DEFAULT_QR_CODE_IDENTIFIER,
   QrCodeConfig,
 } from '@components/qrcode-generator'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
+import { Button } from '@components/ui/button'
 import {
   Form,
   FormControl,
@@ -19,6 +13,10 @@ import {
   FormLabel,
   FormMessage,
 } from '@components/ui/form'
+import { Input } from '@components/ui/input'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 type QrCodeByLinkProps = {
   onQrSettingChange: (qrCodeConfig: QrCodeConfig) => void
@@ -30,7 +28,7 @@ const qrCodeByLinkSchema = z.object({
   qrCodeIdentifier: z.string().optional(),
 })
 
-export default function QrCodeByLink({ onQrSettingChange }: QrCodeByLinkProps) {
+function QrCodeByLink({ onQrSettingChange }: QrCodeByLinkProps) {
   const form = useForm<z.infer<typeof qrCodeByLinkSchema>>({
     resolver: zodResolver(qrCodeByLinkSchema),
     defaultValues: {
@@ -125,3 +123,5 @@ export default function QrCodeByLink({ onQrSettingChange }: QrCodeByLinkProps) {
     </Form>
   )
 }
+
+export { QrCodeByLink }

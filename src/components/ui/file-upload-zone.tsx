@@ -4,6 +4,7 @@ import React, { useState, useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Upload, X } from 'lucide-react'
 import { Button } from '@components/ui/button'
+import { cn } from '@lib/utils'
 
 interface FileData {
   name: string
@@ -67,9 +68,13 @@ function FileUploadZone({ onFileAdd }: FileUploadZoneProps) {
     <div className="w-full max-w-md mx-auto">
       <div
         {...getRootProps()}
-        className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
-          isDragActive ? 'border-accent bg-accent/10' : 'hover:border-accent'
-        }`}
+        className={cn(
+          'border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors',
+          {
+            'border-accent bg-accent': isDragActive,
+            'hover:border-accent': !isDragActive,
+          }
+        )}
       >
         <input {...getInputProps()} />
         <Upload className="mx-auto size-8" />
@@ -101,16 +106,6 @@ function FileUploadZone({ onFileAdd }: FileUploadZoneProps) {
               </li>
             ))}
           </ul>
-
-          <div className="mt-4">
-            <h3 className="text-sm font-semibold">File contents:</h3>
-            {fileData.map((file, index) => (
-              <div key={index} className="mb-4">
-                <h4 className="text-sm font-medium">{file.name}</h4>
-                <pre className="text-xs p-2 rounded">{file.content}</pre>
-              </div>
-            ))}
-          </div>
         </div>
       )}
     </div>
