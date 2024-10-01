@@ -1,10 +1,10 @@
-import { QrCodeGenerator } from '@components/qr-code-generator'
+import { QrCodeGenerator } from '@components/qrcode-generator'
 import { Headline } from '@components/ui/headline'
 
 export default function Home() {
   return (
     <main className="container my-auto text-center">
-      <Headline className="pb-5">
+      <Headline>
         ListQrCode <span className="text-accent">Generator</span>
       </Headline>
       <p>
