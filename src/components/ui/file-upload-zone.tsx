@@ -16,7 +16,7 @@ interface FileData {
 }
 
 interface FileUploadZoneProps {
-  onFileAdd: (files: FileData[]) => void
+  onFileChange: (files: FileData[]) => void
 }
 
 function generateLinkFromCsvRows(header: string[], row: Row): string {
@@ -33,7 +33,7 @@ function generateLinkFromCsvRows(header: string[], row: Row): string {
     .join('&')
 }
 
-function FileUploadZone({ onFileAdd }: FileUploadZoneProps) {
+function FileUploadZone({ onFileChange }: FileUploadZoneProps) {
   const [fileData, setFileData] = useState<FileData[]>([])
 
   const onDrop = useCallback(
@@ -60,7 +60,7 @@ function FileUploadZone({ onFileAdd }: FileUploadZoneProps) {
 
             newFileData.push(fileObj)
             setFileData((prevData) => [...prevData, fileObj])
-            onFileAdd([...fileData, ...newFileData])
+            onFileChange([...fileData, ...newFileData])
           }
           reader.readAsText(file)
         })
@@ -68,14 +68,18 @@ function FileUploadZone({ onFileAdd }: FileUploadZoneProps) {
         toast.error('Only CSV files are allowed')
       }
     },
-    [fileData, onFileAdd]
+    [fileData, onFileChange]
   )
 
-  const removeFile = useCallback((fileToRemove: string) => {
-    setFileData((prevData) =>
-      prevData.filter((file) => file.name !== fileToRemove)
-    )
-  }, [])
+  const removeFile = useCallback(
+    (fileToRemove: string) => {
+      setFileData((prevData) =>
+        prevData.filter((file) => file.name !== fileToRemove)
+      )
+      onFileChange(fileData.filter((file) => file.name !== fileToRemove))
+    },
+    [fileData, onFileChange]
+  )
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,

@@ -3,11 +3,10 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs'
 import { LinkIcon, SheetIcon } from 'lucide-react'
 import { useState } from 'react'
-import { FileUploadZone } from '@components/ui/file-upload-zone'
 import { QrCodeByLink } from '@components/qrcode/qrcode-by-link'
 import { QrCodePreview } from '@components/qrcode/qrcode-preview'
 import { QrCodeDownload } from '@components/qrcode/qrcode-download'
-import { toast } from 'sonner'
+import { QrCodeByCsv } from '@components/qrcode/qrcode-by-csv'
 
 export const DEFAULT_QR_CODE_IDENTIFIER = 'qrCodeId'
 type QrCodeType = 'link' | 'csv'
@@ -41,11 +40,7 @@ export function QrCodeGenerator() {
         </TabsContent>
 
         <TabsContent value={'csv'} className="p-2">
-          <FileUploadZone
-            onFileAdd={(files) => {
-              console.log(files)
-            }}
-          />
+          <QrCodeByCsv onQrSettingChange={setQrCodePreview} />
         </TabsContent>
       </Tabs>
 

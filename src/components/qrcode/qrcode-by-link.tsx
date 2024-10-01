@@ -38,7 +38,6 @@ function QrCodeByLink({ onQrSettingChange }: QrCodeByLinkProps) {
     },
   })
 
-  // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof qrCodeByLinkSchema>) {
     onQrSettingChange({
       type: 'link',
