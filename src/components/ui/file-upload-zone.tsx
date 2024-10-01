@@ -5,15 +5,32 @@ import { useDropzone } from 'react-dropzone'
 import { Upload, X } from 'lucide-react'
 import { Button } from '@components/ui/button'
 import { cn } from '@lib/utils'
+import { toast } from 'sonner'
+
+type Col = string
+type Row = Col[]
 
 interface FileData {
   name: string
-  content: string
-  headers: string[]
+  urls: string[]
 }
 
 interface FileUploadZoneProps {
   onFileAdd: (files: FileData[]) => void
+}
+
+function generateLinkFromCsvRows(header: string[], row: Row): string {
+  return header
+    .map((key, index) => {
+      const col = row[index]
+      if (!col || col === '') {
+        return null
+      }
+
+      return `${encodeURIComponent(key)}=${encodeURIComponent(col)}`
+    })
+    .filter((v) => v !== null)
+    .join('&')
 }
 
 function FileUploadZone({ onFileAdd }: FileUploadZoneProps) {
@@ -30,12 +47,15 @@ function FileUploadZone({ onFileAdd }: FileUploadZoneProps) {
           const reader = new FileReader()
           reader.onload = () => {
             const content = reader.result as string
-            const headers = content.split('\n')[0].split(',')
+            const headers = content.split('\n')[0].split(';')
+            const rows = content
+              .split('\n')
+              .slice(1)
+              .map((row) => row.split(';'))
 
             const fileObj: FileData = {
               name: file.name,
-              content,
-              headers,
+              urls: rows.map((row) => generateLinkFromCsvRows(headers, row)),
             }
 
             newFileData.push(fileObj)
@@ -45,7 +65,7 @@ function FileUploadZone({ onFileAdd }: FileUploadZoneProps) {
           reader.readAsText(file)
         })
       } else {
-        alert('Only CSV files are allowed')
+        toast.error('Only CSV files are allowed')
       }
     },
     [fileData, onFileAdd]

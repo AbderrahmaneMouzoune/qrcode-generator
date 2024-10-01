@@ -7,6 +7,7 @@ import { FileUploadZone } from '@components/ui/file-upload-zone'
 import { QrCodeByLink } from '@components/qrcode/qrcode-by-link'
 import { QrCodePreview } from '@components/qrcode/qrcode-preview'
 import { QrCodeDownload } from '@components/qrcode/qrcode-download'
+import { toast } from 'sonner'
 
 export const DEFAULT_QR_CODE_IDENTIFIER = 'qrCodeId'
 type QrCodeType = 'link' | 'csv'
@@ -23,38 +24,30 @@ export function QrCodeGenerator() {
 
   return (
     <section className="mx-auto max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-2">
-      <div className="space-y-6">
-        <Tabs defaultValue={'link'}>
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger
-              value="link"
-              className="flex flex-col items-center p-2"
-            >
-              <LinkIcon className="size-4" />
-              <span className="text-xs mt-1">Link</span>
-            </TabsTrigger>
-            <TabsTrigger value="csv" className="flex flex-col items-center p-2">
-              <SheetIcon className="size-4" />{' '}
-              <span className="text-xs mt-1">CSV</span>
-            </TabsTrigger>
-          </TabsList>
+      <Tabs defaultValue={'csv'}>
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="link" className="flex flex-col items-center p-2">
+            <LinkIcon className="size-4" />
+            <span className="text-xs mt-1">Link</span>
+          </TabsTrigger>
+          <TabsTrigger value="csv" className="flex flex-col items-center p-2">
+            <SheetIcon className="size-4" />{' '}
+            <span className="text-xs mt-1">CSV</span>
+          </TabsTrigger>
+        </TabsList>
 
-          <TabsContent value={'link'} className="p-2">
-            <QrCodeByLink onQrSettingChange={setQrCodePreview} />
-          </TabsContent>
+        <TabsContent value={'link'} className="p-2">
+          <QrCodeByLink onQrSettingChange={setQrCodePreview} />
+        </TabsContent>
 
-          <TabsContent value={'csv'} className="p-2">
-            <FileUploadZone
-              onFileAdd={(files) => {
-                setQrCodePreview({
-                  type: 'csv',
-                  urls: files.map((file) => file.content),
-                })
-              }}
-            />
-          </TabsContent>
-        </Tabs>
-      </div>
+        <TabsContent value={'csv'} className="p-2">
+          <FileUploadZone
+            onFileAdd={(files) => {
+              console.log(files)
+            }}
+          />
+        </TabsContent>
+      </Tabs>
 
       <div className="space-y-6">
         <QrCodePreview url={qrCodePreview.urls[0]} />
