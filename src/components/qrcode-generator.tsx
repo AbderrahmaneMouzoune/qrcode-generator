@@ -9,6 +9,7 @@ import { QrCodeDownload } from '@components/qrcode/qrcode-download'
 import { QrCodeByCsv } from '@components/qrcode/qrcode-by-csv'
 import { Headline } from '@components/ui/headline'
 import { Button } from '@components/ui/button'
+import { QrCodePreviewDownloadManager } from './qrcode/qrcode-preview-download-manager'
 
 export const DEFAULT_QR_CODE_IDENTIFIER = 'qrCodeId'
 type QrCodeType = 'link' | 'csv'
@@ -52,31 +53,16 @@ export function QrCodeGenerator() {
         </Tabs>
 
         <div className="space-y-6">
-          <QrCodePreview url={qrCodePreview.urls[0]} />
-          <QrCodeDownload urls={qrCodePreview.urls} />
+          <QrCodePreview
+            url={qrCodePreview.urls[0]}
+            id={`preview-${qrCodePreview.urls[0]}`}
+          />
+          {/* <QrCodeDownload urls={qrCodePreview.urls} /> */}
         </div>
       </article>
-      {qrCodePreview.urls.length > 0 && (
-        <article>
-          <div className="flex w-full justify-between">
-            <Headline>We got {qrCodePreview.urls.length} QRCode</Headline>
-            <Button onClick={() => setQrCodeGenerated(qrCodePreview.urls)}>
-              Preview QRCode
-            </Button>
-          </div>
 
-          <ul>
-            {qrCodeGenerated.map((url, index) => (
-              <li
-                key={`url-${index}-${url}`}
-                className="grid grid-cols-2 items-center"
-              >
-                <span>{url}</span>
-                <QrCodePreview url={url} />
-              </li>
-            ))}
-          </ul>
-        </article>
+      {qrCodePreview.urls.length > 0 && (
+        <QrCodePreviewDownloadManager urls={qrCodePreview.urls} />
       )}
     </section>
   )

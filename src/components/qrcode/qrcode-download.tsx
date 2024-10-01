@@ -1,21 +1,23 @@
 'use client'
 
-import React, { useRef, useState } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import { Button } from '@components/ui/button'
 import { FileTextIcon, ImageIcon } from 'lucide-react'
 import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
-import { QRCodeSVG } from 'qrcode.react'
+import { QRCodeCanvas, QRCodeSVG } from 'qrcode.react'
 import { LoaderButton } from '@components/ui/loader-button'
 import { toast } from 'sonner'
+import { format } from 'date-fns/format'
 
 type QrCodeDownloadProps = {
   urls: string[]
 }
 
 function QrCodeDownload({ urls }: QrCodeDownloadProps) {
-  const svgRefs = useRef<(SVGSVGElement | null)[]>([])
-  const [isLoading, setIsLoading] = useState(false) // Loading state
+  const qrCodesRefs = useRef<(SVGSVGElement | HTMLCanvasElement | null)[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [formatToDownload, setFormatToDownload] = useState<'SVG' | 'PNG'>('SVG')
 
   const downloadAllQrCodes = async () => {
     toast.info('Generating ZIP file...')
@@ -27,11 +29,33 @@ function QrCodeDownload({ urls }: QrCodeDownloadProps) {
       await Promise.all(
         urls.map((url, index) => {
           return new Promise<void>((resolve) => {
-            // Use a ref to get the serialized SVG
-            const svgString = svgRefs.current[index]?.outerHTML || ''
-            const fileName = `qr_code_${index + 1}.svg`
-            folder?.file(fileName, svgString) // Add SVG QR code to the ZIP
-            resolve()
+            const node = qrCodesRefs.current[index]
+            if (node === null) {
+              return
+            }
+
+            if (
+              formatToDownload === 'PNG' &&
+              node instanceof HTMLCanvasElement
+            ) {
+              const content = node.toDataURL('image/png')
+              const fileName = `qr_code_${index + 1}.png`
+              folder?.file(fileName, content)
+              resolve()
+            }
+
+            if (formatToDownload === 'SVG' && node instanceof SVGSVGElement) {
+              const serializer = new XMLSerializer()
+              const content =
+                'data:image/svg+xml;charset=utf-8,' +
+                encodeURIComponent(
+                  '<?xml version="1.0" standalone="no"?>' +
+                    serializer.serializeToString(node)
+                )
+              const fileName = `qr_code_${index + 1}.svg`
+              folder?.file(fileName, content)
+              resolve()
+            }
           })
         })
       )
@@ -50,32 +74,57 @@ function QrCodeDownload({ urls }: QrCodeDownloadProps) {
   return (
     <div className="flex space-y-2 justify-center">
       <div className="flex space-x-4">
-        <Button variant="outline" className="w-full" disabled>
-          <FileTextIcon className="size-5 mr-2" />
-          Download {urls.length} SVG
-        </Button>
         <LoaderButton
           variant="outline"
           className="w-full"
-          onClick={downloadAllQrCodes}
-          isLoading={isLoading}
+          onClick={() => {
+            setFormatToDownload('SVG')
+            downloadAllQrCodes()
+          }}
+          isLoading={isLoading && formatToDownload === 'SVG'}
+        >
+          <FileTextIcon className="size-5 mr-2" />
+          Download {urls.length} SVG
+        </LoaderButton>
+        <LoaderButton
+          variant="outline"
+          className="w-full"
+          onClick={() => {
+            setFormatToDownload('PNG')
+            downloadAllQrCodes()
+          }}
+          isLoading={isLoading && formatToDownload === 'PNG'}
         >
           <ImageIcon className="size-5 mr-2" />
           Download {urls.length} PNG
         </LoaderButton>
       </div>
 
-      {urls.map((url, index) => (
-        <QRCodeSVG
-          key={index}
-          value={url}
-          size={256}
-          level="H"
-          // @ts-expect-error
-          ref={(el) => (svgRefs.current[index] = el as SVGSVGElement)}
-          style={{ display: 'none' }} // Hide the SVG elements
-        />
-      ))}
+      {formatToDownload === 'SVG' &&
+        urls.map((url, index) => (
+          <QRCodeSVG
+            key={index}
+            value={url}
+            size={256}
+            level="H"
+            // @ts-expect-error
+            ref={(el) => (qrCodesRefs.current[index] = el as SVGSVGElement)}
+            style={{ display: 'none' }}
+          />
+        ))}
+
+      {formatToDownload === 'PNG' &&
+        urls.map((url, index) => (
+          <QRCodeCanvas
+            key={index}
+            value={url}
+            size={256}
+            level="H"
+            // @ts-expect-error
+            ref={(el) => (qrCodesRefs.current[index] = el as HTMLCanvasElement)}
+            style={{ display: 'none' }}
+          />
+        ))}
     </div>
   )
 }
